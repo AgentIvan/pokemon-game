@@ -1,8 +1,10 @@
 import React from 'react';
+import cn from 'classnames';
+
 import s from './Layout.module.css';
 
 const Layout = (props) => {
-  const { children, id = null, urlBg = null, colorBg = null } = props;
+  const { children, id, urlBg, colorBg } = props;
 
   const styleBg = {
     backgroundImage: urlBg && `url(${urlBg})`,
@@ -24,12 +26,18 @@ const Layout = (props) => {
             </div>
           )}
           {isContentExist && (
-            <div className={[s.content, s.full].join(' ')}>{content}</div>
+            <div className={cn(s.content, s.full)}>{content}</div>
           )}
         </article>
       </div>
     </section>
   );
+};
+
+Layout.defaultProps = {
+  id: null,
+  urlBg: null,
+  colorBg: null,
 };
 
 export default Layout;
