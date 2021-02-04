@@ -1,44 +1,28 @@
+import { Link } from 'react-router-dom';
 import cn from 'classnames';
+
+import routes from '../../../configs/routes';
 
 import s from './Menu.module.css';
 
-const Menu = ({ isMenuActive, onChangePage }) => {
-  const handleMenuItemClick = (e) => {
-    e.preventDefault();
-    const page = e.target.getAttribute('href').slice(1);
-    onChangePage(page);
-  };
-
+const Menu = ({ isMenuActive, onMenuItemClick }) => {
   return (
     <div
       className={cn(s.menuContainer, {
-        [s.deactive]: !isMenuActive,
-        [s.active]: isMenuActive,
+        [s.deactive]: isMenuActive === false,
+        [s.active]: isMenuActive === true,
       })}
     >
       <div className={s.overlay} />
       <div className={s.menuItems}>
         <ul>
-          <li>
-            <a href="#welcome" onClick={handleMenuItemClick}>
-              HOME
-            </a>
-          </li>
-          <li>
-            <a href="#game" onClick={handleMenuItemClick}>
-              GAME
-            </a>
-          </li>
-          <li>
-            <a href="#about" onClick={handleMenuItemClick}>
-              ABOUT
-            </a>
-          </li>
-          <li>
-            <a href="#contact" onClick={handleMenuItemClick}>
-              CONTACT
-            </a>
-          </li>
+          {routes.map(({ page, href }) => (
+            <li key={page}>
+              <Link to={href} onClick={onMenuItemClick}>
+                {page}
+              </Link>
+            </li>
+          ))}
         </ul>
       </div>
     </div>
@@ -47,7 +31,7 @@ const Menu = ({ isMenuActive, onChangePage }) => {
 
 Menu.defaultProps = {
   isMenuActive: false,
-  onChangePage: () => {},
+  onMenuItemClick: () => {},
 };
 
 export default Menu;
