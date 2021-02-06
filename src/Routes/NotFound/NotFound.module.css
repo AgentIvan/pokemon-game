@@ -1,0 +1,29 @@
+.root {
+  position: relative;
+  min-height: 100vh;
+  background: #fafafa url('../../assets/notFound/404.png') no-repeat 50% 40%;
+}
+
+.btn {
+  position: absolute;
+  left: 50%;
+  bottom: 25%;
+  transform: translateX(-50%);
+  margin-top: 10px;
+  padding: 6px 48px;
+  border: 1px solid #1e2431;;
+  background-color: transparent;
+  font-family: 'Overlock', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+  color: #1e2431;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.btn:hover {
+  border-color: transparent;
+  background-color: #a0578c;
+  color: #fafafa;
+}

@@ -1,32 +1,17 @@
-import React, { useState, useEffect } from 'react';
-
-import MenuNavbar from '../../Components/MenuNavbar';
 import Header from '../../Components/Header';
 import Layout from '../../Components/Layout';
-import PokemonCard from '../../Components/PokemonCard';
-import Footer from '../../Components/Footer';
 
 import layoutBG1 from '../../assets/layout/bg_layout_1.jpg';
-import layoutBG2 from '../../assets/layout/bg_layout_2.jpg';
 
-import s from './HomePage.module.css';
-
-const HomePage = ({ onChangePage }) => {
-  const [pokemons, setPokemons] = useState([]);
-  useEffect(() => {
-    fetch('/firstPokemons.json')
-      .then((response) => response.json())
-      .then(setPokemons);
-  }, []);
-
+const HomePage = () => {
   return (
     <>
-      <MenuNavbar onChangePage={onChangePage}/>
       <Header>
         <h1>Pokemon Game!</h1>
         <p>Actually, my first game on JS</p>
       </Header>
-      <Layout id="first-layout" urlBg={layoutBG1}>
+
+      <Layout id="home-about" urlBg={layoutBG1}>
         <h2>What is this game about?</h2>
         <p>
           In the game two players face off against one another, one side playing
@@ -35,7 +20,8 @@ const HomePage = ({ onChangePage }) => {
           turning them into the player's own color of red or blue.
         </p>
       </Layout>
-      <Layout id="middle-layout" colorBg="#2193ed">
+      
+      <Layout id="home-rules" colorBg="#2193ed">
         <h2>How to play?</h2>
         <p>
           To win, a majority of the total ten cards played (including the one
@@ -49,28 +35,8 @@ const HomePage = ({ onChangePage }) => {
           the player's color instead.
         </p>
       </Layout>
-      <Layout id="last-layout" urlBg={layoutBG2}>
-        <h2>Here the heroes!</h2>
-        <div className={s.flex}>
-          {pokemons.map((card) => (
-            <PokemonCard
-              key={card.id}
-              id={card.id}
-              name={card.name}
-              type={card.type}
-              img={card.img}
-              values={card.values}
-            />
-          ))}
-        </div>
-      </Layout>
-      <Footer />
     </>
   );
-};
-
-HomePage.defaultProps = {
-  onChangePage: () => {},
 };
 
 export default HomePage;
