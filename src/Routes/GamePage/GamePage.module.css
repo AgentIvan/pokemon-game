@@ -1,0 +1,28 @@
+.flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.addPokemon {
+  text-align: center;
+}
+
+.addPokemonBtn {
+  margin: 10px auto;
+  padding: 6px 48px;
+  border: 1px solid transparent;
+  background-color: #ffad01;
+  font-family: 'Overlock', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+  color: #1e2431;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.addPokemonBtn:hover {
+  background-color: #ffaf016d;
+}

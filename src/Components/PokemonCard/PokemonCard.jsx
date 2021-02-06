@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import cn from 'classnames';
 
 import cardBackBg from '../../assets/pokemonCard/card-back-side.jpg';
@@ -6,13 +5,11 @@ import cardBackBg from '../../assets/pokemonCard/card-back-side.jpg';
 import s from './PokemonCard.module.css';
 
 const PokemonCard = (props) => {
-  const { id, name, type, img, values } = props;
+  const { id, name, type, img, values, isActive, onCardClick } = props;
   const { top = null, right = null, bottom = null, left = null } = values;
 
-  const [isActive, setActive] = useState(false);
-
   const handleCardClick = () => {
-    setActive((isActive) => !isActive);
+    onCardClick(id);
   };
 
   return (
@@ -57,6 +54,8 @@ PokemonCard.defaultProps = {
   type: null,
   img: null,
   values: [],
+  isActive: false,
+  onCardClick: () => {},
 };
 
 export default PokemonCard;

@@ -1,4 +1,4 @@
-#navbar {
+.navbar {
   position: fixed;
   z-index: 9999;
   width: 100%;
@@ -7,11 +7,11 @@
   justify-content: center;
 }
 
-#navbar.bgActive {
+.navbar.bgActive {
   background: #181d23;
 }
 
-#navbar .navWrapper {
+.navbar .navWrapper {
   width: 100%;
   display: flex;
   justify-content: space-between;
@@ -20,14 +20,18 @@
   padding: 0 2rem;
 }
 
-#navbar .brand {
+.navbar .brand {
   font-size: 1.6rem;
   color: #fafafa;
   cursor: default;
 }
 
-#navbar .brand img {
+.navbar .brand img {
   max-height: 35px;
+}
+
+.navbar .brand:hover {
+  transform: scale(1.2);
 }
 
 /***** Menu Button *****/
@@ -36,6 +40,7 @@
   height: 22px;
   width: 30px;
   outline: none;
+  cursor: pointer;
 }
 
 .menuButton span,
