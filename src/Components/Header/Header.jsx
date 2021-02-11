@@ -11,7 +11,7 @@ const Header = ({ children }) => {
   }
 
   const handlePlayBtnClick = () => {
-    history.push('/game');
+    history.push('/game/');
   };
 
   return (

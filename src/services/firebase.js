@@ -11,10 +11,33 @@ const firebaseConfig = {
   appId: '1:484399565934:web:e5d4160f630c22550eaa7f',
 };
 
-firebase.initializeApp(firebaseConfig);
+class Firebase {
+  constructor() {
+    firebase.initializeApp(firebaseConfig);
 
-const database = firebase.database();
+    this.fb = firebase;
+    this.database = this.fb.database();
+  }
 
-export const fb = firebase;
+  getPokemonsBySockets = (cb) => {
+    this.database.ref('pokemons').on('value', (snapshot) => {
+      cb(snapshot.val());
+    });
+  };
 
-export default database;
+  // getPokemonsAtOnce = async () => {
+  //   const snapshot = await this.database.ref('pokemons').once('value');
+  //   return snapshot.val();
+  // };
+
+  postPokemon = (dbID, pokemon) => {
+    this.database.ref(`pokemons/${dbID}`).set(pokemon);
+  };
+
+  addPokemon = (pokemon) => {
+    const newDbID = this.database.ref().child('pokemons').push().key;
+    this.database.ref(`pokemons/${newDbID}`).set(pokemon);
+  };
+}
+
+export default Firebase;

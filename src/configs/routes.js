@@ -5,7 +5,7 @@ const routes = [
   },
   {
     page: 'GAME',
-    href: '/game',
+    href: '/game/',
   },
   {
     page: 'ABOUT',

@@ -5,12 +5,12 @@
   flex-wrap: wrap;
 }
 
-.addPokemon {
+.start {
+  margin: 10px 0 30px;
   text-align: center;
 }
 
-.addPokemonBtn {
-  margin: 10px auto;
+.startBtn {
   padding: 6px 48px;
   border: 1px solid transparent;
   background-color: #ffad01;
@@ -23,6 +23,13 @@
   transition: all 0.3s ease-in-out;
 }
 
-.addPokemonBtn:hover {
+.startBtn:hover {
   background-color: #ffaf016d;
+}
+
+.card {
+  width: 268px;
+  height: 388px;
+  margin: 16px;
+  perspective: 1000px;
 }
