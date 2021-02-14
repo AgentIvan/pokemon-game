@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import cn from 'classnames';
 
-import Logo from '../../../assets/navbar/logo.png';
+import Logo from './assets/logo.png';
 
 import s from './Navbar.module.css';
 
@@ -9,11 +9,11 @@ const Navbar = ({ isMenuActive, isBgActive, onMenuBtnClick }) => {
   return (
     <nav className={cn(s.navbar, { [s.bgActive]: isBgActive })}>
       <div className={s.navWrapper}>
-        <p className={s.brand}>
+        <div className={s.brand}>
           <Link to="/">
             <img src={Logo} alt="Pokemon Logo" />
           </Link>
-        </p>
+        </div>
         <div
           className={cn(s.menuButton, { [s.active]: isMenuActive })}
           onClick={onMenuBtnClick}

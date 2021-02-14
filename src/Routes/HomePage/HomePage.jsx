@@ -1,7 +1,7 @@
 import Header from '../../Components/Header';
 import Layout from '../../Components/Layout';
 
-import layoutBG1 from '../../assets/layout/bg_layout_1.jpg';
+import layoutBG1 from '../../Components/Layout/assets/bg_layout_1.jpg';
 
 const HomePage = () => {
   return (
