@@ -1,7 +1,5 @@
 .root {
-  background-image: url('../../../assets/board/board.png');
-  background-size: cover;
-  background-repeat: no-repeat;
+  background: url("./assets/board.png") no-repeat center / cover;
   height: calc(100vw / 1.71);
   position: relative;
 }
@@ -41,10 +39,18 @@
   margin-top: 0;
 }
 
-.playerOne {
+.playerOne,
+.playerTwo {
   position: absolute;
   top: 4.3vw;
-  left: 5vw;
-  width: 250px;
+  width: 18vw;
   height: 50.3vw;
+}
+
+.playerOne {
+  left: 2vw;
+}
+
+.playerTwo {
+  right: 0vw;
 }

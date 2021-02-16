@@ -1,0 +1,24 @@
+.cardBoard {
+	width: 100%;
+	max-width: 16vw;
+	height: 14.8vw;
+	margin-top: -6vw;
+	transition: transform 0.3s;
+  cursor: pointer;
+}
+
+.cardBoard:first-child {
+	margin-top: 0;
+}
+
+.cardBoard.selected.playerOne {
+	transform: translateX(20px);
+}
+
+.cardBoard.selected.playerTwo {
+	transform: translateX(-20px);
+}
+
+.cardBoard.forbidden {
+  cursor: not-allowed;
+}

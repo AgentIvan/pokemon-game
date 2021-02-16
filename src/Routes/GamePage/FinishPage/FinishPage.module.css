@@ -1,0 +1,70 @@
+.root {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.title {
+	font-size: 1.4rem;
+}
+
+.title .separator {
+  display: block;
+	background: #f300b4;
+	width: 250px;
+	height: 3px;
+	margin: 1rem auto;
+	padding: 0;
+}
+
+.playerCards {
+	display: flex;
+}
+
+.endGame {
+	margin: 30px 0;
+}
+
+.endGameBtn {
+	padding: 6px 48px;
+	border: 2px solid transparent;
+	border-radius: 5px;
+	background-color: #ffad01;
+	font-family: "Overlock", sans-serif;
+	font-size: 28px;
+	font-weight: 700;
+	line-height: 1;
+	color: #1e2431;
+	cursor: pointer;
+	transition: all 0.3s ease-in-out;
+}
+
+.endGameBtn:hover {
+	background-color: transparent;
+	border-color: #ffad01;
+}
+
+.endGameBtn:focus {
+	outline: none;
+}
+
+.card {
+	width: 268px;
+	height: 388px;
+	margin: 16px;
+	perspective: 1000px;
+	opacity: 0.6;
+	transition: opacity 0.4s 0.1s, transform 0.4s 0.1s;
+}
+
+.opponentCards .card.pickable {
+	cursor: pointer;
+}
+
+.opponentCards .card.pickable:hover {
+	opacity: 1;
+}
+
+.opponentCards .card.pickable.chosen {
+	transform: scale(1.15);
+}

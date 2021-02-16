@@ -1,6 +1,6 @@
-import cn from 'classnames';
+import cn from "classnames";
 
-import s from './PokemonCard.module.css';
+import s from "./PokemonCard.module.css";
 
 const PokemonCard = (props) => {
   const {
@@ -12,6 +12,7 @@ const PokemonCard = (props) => {
     isActive,
     isSelected,
     minimize,
+    possession,
     className,
     onCardClick,
   } = props;
@@ -32,7 +33,7 @@ const PokemonCard = (props) => {
     >
       <div className={s.cardFront}>
         <div className={cn(s.wrap, s.front)}>
-          <div className={cn(s.pokemon, s[type])}>
+          <div className={cn(s.pokemon, s[type], s[possession])}>
             <div className={s.values}>
               <div className={cn(s.count, s.top)}>{top}</div>
               <div className={cn(s.count, s.right)}>{right}</div>
@@ -72,6 +73,7 @@ PokemonCard.defaultProps = {
   isActive: true,
   isSelected: false,
   minimize: false,
+  possession: "",
   onCardClick: () => {},
 };
 
