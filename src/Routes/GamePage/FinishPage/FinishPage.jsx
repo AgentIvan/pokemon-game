@@ -1,105 +1,97 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Redirect, useHistory } from "react-router-dom";
-import { useSelector } from "react-redux";
 import cn from "classnames";
 
-import Firebase from "../../../services/firebase";
-
-import {
-  selectPlayerOneCards,
-  selectPlayerTwoCards,
-  selectResult,
-} from "../../../store/game";
+import { FirebaseContext } from "../../../context/firebaseContext";
+import { usePlayersCards } from "../../../context/playersCardsContext";
+import { useGameResult } from "../../../context/gameResultContext";
 
 import PokemonCard from "../../../Components/PokemonCard";
 
 import s from "./FinishPage.module.css";
 
 const FinishPage = () => {
-  const history = useHistory();
+	const history = useHistory();
 
-  const playerOneCards = useSelector(selectPlayerOneCards);
-  const playerTwoCards = useSelector(selectPlayerTwoCards);
-  const gameResult = useSelector(selectResult);
+	const { addPokemon } = useContext(FirebaseContext);
+	const { playersCards } = usePlayersCards();
+	const { gameResult } = useGameResult();
 
-  const [chosenOpponentCard, setChosenOpponentCard] = useState(null);
+	const [chosenOpponentCard, setChosenOpponentCard] = useState(null);
 
-  if (!playerOneCards || !playerTwoCards) {
-    return <Redirect to="/game/" />;
-  }
+	if (!playersCards) {
+		return <Redirect to="/game/" />;
+	}
 
-  const handleOpponentCardClick = (card) => {
-    if (!chosenOpponentCard) {
-      setChosenOpponentCard(card);
-    }
-  };
+	const { playerOne, playerTwo } = playersCards;
 
-  const handleEndGameBtn = () => {
-    if (gameResult === "win") {
-      if (!chosenOpponentCard) {
-        alert("You must pick one of the opponent`s card!");
-        return;
-      }
-      Firebase.addPokemon(chosenOpponentCard);
-    }
+	const handleOpponentCardClick = (card) => {
+		setChosenOpponentCard(card);
+	};
 
-    history.replace("/game/");
-  };
+	const handleEndGameBtn = () => {
+		if (gameResult === "win") {
+			if (!chosenOpponentCard) {
+				alert("You must pick one of the opponent`s card!");
+				return;
+			}
+			addPokemon(chosenOpponentCard);
+		}
 
-  const notification =
-    gameResult === "win"
-      ? 'Congratulations!. Now pick one of the opponent`s pokemon and then press "End Game" to continue'
-      : 'The game is over. Better luck next time! Press "End Game" to continue';
+		history.replace("/game/");
+	};
 
-  const isAbleToChoose = !chosenOpponentCard && gameResult === "win";
+	const notification =
+		gameResult === "win"
+			? 'Congratulations!. Now pick one of the opponent`s pokemon and then press "End Game" to continue'
+			: 'The game is over. Better luck next time! Press "End Game" to continue';
 
-  return (
-    <div className={s.root}>
-      <div className={s.title}>
-        <h2>{notification}</h2>
-        <span className={s.separator}></span>
-      </div>
+	return (
+		<div className={s.root}>
+			<div className={s.title}>
+				<h2>{notification}</h2>
+				<span className={s.separator}></span>
+			</div>
 
-      <div className={s.playerCards}>
-        {playerOneCards.map((card) => (
-          <PokemonCard
-            key={card.id}
-            className={s.card}
-            id={card.id}
-            name={card.name}
-            type={card.type}
-            img={card.img}
-            values={card.values}
-          />
-        ))}
-      </div>
+			<div className={s.playerCards}>
+				{playerOne.map((card) => (
+					<PokemonCard
+						key={card.id}
+						className={s.card}
+						id={card.id}
+						name={card.name}
+						type={card.type}
+						img={card.img}
+						values={card.values}
+					/>
+				))}
+			</div>
 
-      <div className={s.endGame}>
-        <button className={s.endGameBtn} onClick={handleEndGameBtn}>
-          End game
-        </button>
-      </div>
+			<div className={s.endGame}>
+				<button className={s.endGameBtn} onClick={handleEndGameBtn}>
+					End game
+				</button>
+			</div>
 
-      <div className={cn(s.playerCards, s.opponentCards)}>
-        {playerTwoCards.map((card) => (
-          <PokemonCard
-            key={card.id}
-            id={card.id}
-            name={card.name}
-            type={card.type}
-            img={card.img}
-            values={card.values}
-            isActive={false}
-            className={cn(s.card, {
-              [s.chosen]: card.id === chosenOpponentCard?.id,
-              [s.pickable]: isAbleToChoose,
-            })}
-            onCardClick={() => isAbleToChoose && handleOpponentCardClick(card)}
-          />
-        ))}
-      </div>
-    </div>
-  );
+			<div className={cn(s.playerCards, s.opponentCards)}>
+				{playerTwo.map((card) => (
+					<PokemonCard
+						key={card.id}
+						className={cn(s.card, {
+							[s.chosen]: card.id === chosenOpponentCard?.id,
+							[s.pickable]: gameResult === "win",
+						})}
+						id={card.id}
+						name={card.name}
+						type={card.type}
+						img={card.img}
+						values={card.values}
+						onCardClick={() => handleOpponentCardClick(card)}
+					/>
+				))}
+			</div>
+		</div>
+	);
 };
 
 export default FinishPage;

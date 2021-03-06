@@ -19,6 +19,10 @@ const HomePage = () => {
           cards in a hand and the aim is to capture the opponent's cards by
           turning them into the player's own color of red or blue.
         </p>
+      </Layout>
+      
+      <Layout id="home-rules" colorBg="#2193ed">
+        <h2>How to play?</h2>
         <p>
           To win, a majority of the total ten cards played (including the one
           card that is not placed on the board) must be of the player's card

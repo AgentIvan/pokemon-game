@@ -13,7 +13,6 @@
     animation: spin 1s linear infinite;
     transform: rotateY(0deg);
     transition: transform 0.3s 0.1s;
-    pointer-events: none;
 }
 
 .rightSide {

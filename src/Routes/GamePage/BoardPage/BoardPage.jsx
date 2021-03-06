@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
 
-import { selectSelectedPokemons } from "../../../store/pokemons";
-import * as gameStore from "../../../store/game";
+import { usePokemons } from "../../../context/pokemonContext";
+import { usePlayersCards } from "../../../context/playersCardsContext";
+import { useGameResult } from "../../../context/gameResultContext";
+import axios, { source } from "../../../services/axios";
 
-import Loader from "../../../Components/Loader";
 import PokemonCard from "../../../Components/PokemonCard";
 import PlayerBoard from "./Components/PlayerBoard";
 import Result from "./Components/Result";
@@ -14,191 +14,190 @@ import ArrowChoice from "./Components/ArrowChoice";
 import s from "./BoardPage.module.css";
 
 const BoardPage = () => {
-  const randomizeCurrentPlayer = () => {
-    const playerNumber = Math.floor(Math.random() * 2) + 1;
-    return playerNumber === 1 ? "One" : "Two";
-  };
+	const randomizeCurrentPlayer = () => {
+		const playerNumber = Math.floor(Math.random() * 2) + 1;
+		return playerNumber === 1 ? "One" : "Two";
+	};
 
-  const scoreCounter = (board, playerOne, playerTwo) => {
-    let playerOneScore = playerOne.length;
-    let playerTwoScore = playerTwo.length;
+	const scoreCounter = (board, playerOne, playerTwo) => {
+		let playerOneScore = playerOne.length;
+		let playerTwoScore = playerTwo.length;
 
-    board.forEach((cell) => {
-      if (cell.card.possession === "blue") {
-        playerOneScore += 1;
-      }
-      if (cell.card.possession === "red") {
-        playerTwoScore += 1;
-      }
-    });
-    return [playerOneScore, playerTwoScore];
-  };
+		board.forEach((cell) => {
+			if (cell.card.possession === "blue") {
+				playerOneScore += 1;
+			}
+			if (cell.card.possession === "red") {
+				playerTwoScore += 1;
+			}
+		});
+		return [playerOneScore, playerTwoScore];
+	};
 
-  const history = useHistory();
+	const history = useHistory();
 
-  const selectedPokemons = useSelector(selectSelectedPokemons);
-  const isFetching = useSelector(gameStore.selectIsFetching);
-  const board = useSelector(gameStore.selectBoard);
-  const playerTwoCards = useSelector(gameStore.selectPlayerTwoCards);
-  const chosenCard = useSelector(gameStore.selectChosenCard);
-  const turn = useSelector(gameStore.selectTurn);
-  const gameResult = useSelector(gameStore.selectResult);
-  const currentPlayer = useSelector(gameStore.selectCurrentPlayer);
-  const dispatch = useDispatch();
+	const { handleSetPlayerCards } = usePlayersCards();
+	const { selectedPokemons } = usePokemons();
+	const { gameResult, handleSetGameResult } = useGameResult();
 
-  const [currentPlayerOneCards, setCurrentPlayerOneCards] = useState([]);
-  const [currentPlayerTwoCards, setCurrentPlayerTwoCards] = useState([]);
+	const [playerOneCards, setPlayerOneCards] = useState(() => {
+		return Object.values(selectedPokemons).map((card) => ({
+			...card,
+			possession: "blue",
+		}));
+	});
+	const [board, setBoard] = useState([]);
+	const [playerTwoCards, setPlayerTwoCards] = useState([]);
+	const [chosenCard, setChosenCard] = useState(null);
+	const [turn, setTurn] = useState(0);
+	const [currentPlayer, setCurrentPlayer] = useState(() =>
+		randomizeCurrentPlayer()
+	);
 
-  useEffect(() => {
-    if (Object.keys(selectedPokemons).length !== 0) {
-      dispatch(gameStore.setupInitialData());
-      dispatch(gameStore.setPlayerOneCards(Object.values(selectedPokemons)));
+	const setupInitialData = async () => {
+		try {
+			const [boardData, playerTwoCardsData] = await Promise.all([
+				axios.get("board", { cancelToken: source.token }),
+				axios.get("create-player", { cancelToken: source.token }),
+			]);
 
-      const randomStartPlayer = randomizeCurrentPlayer();
-      dispatch(gameStore.setCurrentPlayer(randomStartPlayer));
+			setBoard(boardData.data);
 
-      const markedPlayerOneCards = Object.values(selectedPokemons).map(
-        (card) => ({
-          ...card,
-          possession: "blue",
-        })
-      );
-      setCurrentPlayerOneCards(markedPlayerOneCards);
-    }
-  }, []);
+			const playerTwoCards = playerTwoCardsData.data.map((card) => ({
+				...card,
+				possession: "red",
+			}));
+			setPlayerTwoCards(playerTwoCards);
 
-  useEffect(() => {
-    if (playerTwoCards.length > 0) {
-      const markedPlayerTwoCards = playerTwoCards.map((card) => ({
-        ...card,
-        possession: "red",
-      }));
-      setCurrentPlayerTwoCards(markedPlayerTwoCards);
-    }
-  }, [playerTwoCards]);
+			handleSetPlayerCards(playerOneCards, playerTwoCards);
+		} catch (err) {
+			console.error(err);
+		}
+	};
 
-  useEffect(() => {
-    let timerID;
+	useEffect(() => {
+		setupInitialData();
 
-    if (turn >= 9) {
-      const [playerOneScore, playerTwoScore] = scoreCounter(
-        board,
-        currentPlayerOneCards,
-        currentPlayerTwoCards
-      );
+		return () => {
+			// source.cancel("Game aborted!");
+		};
+	}, []);
 
-      dispatch(gameStore.setCurrentPlayer(null));
+	const handleBoardClick = async (position) => {
+		if (chosenCard) {
+			const params = {
+				position,
+				card: chosenCard,
+				board,
+			};
 
-      switch (Math.sign(playerOneScore - playerTwoScore)) {
-        case 1:
-          dispatch(gameStore.setResult("win"));
-          break;
-        case -1:
-          dispatch(gameStore.setResult("lose"));
-          break;
-        default:
-          dispatch(gameStore.setResult("draw"));
-      }
+			const gameTurnData = await axios.post("players-turn", params);
 
-      timerID = setTimeout(() => {
-        history.replace("/game/finish");
-      }, 3000);
-    }
+			if (chosenCard.player === "One") {
+				setPlayerOneCards((prevState) =>
+					prevState.filter((card) => card.id !== chosenCard.id)
+				);
+			}
 
-    return () => {
-      clearTimeout(timerID);
-    };
-  }, [turn]);
+			if (chosenCard.player === "Two") {
+				setPlayerTwoCards((prevState) =>
+					prevState.filter((card) => card.id !== chosenCard.id)
+				);
+			}
 
-  useEffect(() => {
-    if (chosenCard) {
-      if (chosenCard.player === "One") {
-        const updatedCurrentPlayerOneCards = currentPlayerOneCards.filter(
-          (card) => card.id !== chosenCard.id
-        );
-        setCurrentPlayerOneCards(updatedCurrentPlayerOneCards);
-      }
+			setBoard(gameTurnData.data);
 
-      if (chosenCard.player === "Two") {
-        const updatedCurrentPlayerTwoCards = currentPlayerTwoCards.filter(
-          (card) => card.id !== chosenCard.id
-        );
-        setCurrentPlayerTwoCards(updatedCurrentPlayerTwoCards);
-      }
+			setTurn((prevState) => prevState + 1);
 
-      dispatch(gameStore.setTurn(turn + 1));
+			setCurrentPlayer((prevState) => {
+				return prevState === "One" ? "Two" : "One";
+			});
+		}
+	};
 
-      const actualCurrentPlayer = currentPlayer === "One" ? "Two" : "One";
-      dispatch(gameStore.setCurrentPlayer(actualCurrentPlayer));
-    }
-  }, [board]);
+	useEffect(() => {
+		let timerID;
 
-  const handleBoardClick = (position) => {
-    if (chosenCard) {
-      dispatch(
-        gameStore.updateBoardData({ position, card: chosenCard, board })
-      );
-    }
-  };
+		if (turn >= 9) {
+			const [playerOneScore, playerTwoScore] = scoreCounter(
+				board,
+				playerOneCards,
+				playerTwoCards
+			);
 
-  const handleCardClick = (card) => {
-    dispatch(gameStore.setChosenCard(card));
-  };
+			setCurrentPlayer(null);
 
-  if (Object.keys(selectedPokemons).length === 0) {
-    history.replace("/game/");
-  }
+			switch (Math.sign(playerOneScore - playerTwoScore)) {
+				case 1:
+					handleSetGameResult("win");
+					break;
+				case -1:
+					handleSetGameResult("lose");
+					break;
+				default:
+					handleSetGameResult("draw");
+			}
 
-  const isWaitForGameStart = board.length === 0 && isFetching;
+			timerID = setTimeout(() => {
+				history.replace("/game/finish");
+			}, 3000);
+		}
 
-  const boardPageContent = (
-    <div className={s.root}>
-      <div className={s.playerOne}>
-        <PlayerBoard
-          cards={currentPlayerOneCards}
-          player="One"
-          currentPlayer={currentPlayer}
-          onChooseCard={(card) => handleCardClick(card)}
-        />
-      </div>
+		return () => {
+			clearTimeout(timerID);
+		};
+	}, [turn]);
 
-      <div className={s.board}>
-        {board.map((cell) => (
-          <div
-            key={cell.position}
-            className={s.boardPlate}
-            onClick={() => {
-              !cell.card && handleBoardClick(cell.position);
-            }}
-          >
-            {cell.card && (
-              <PokemonCard
-                {...cell.card}
-                minimize
-                isActive
-                isSelected={false}
-              />
-            )}
-          </div>
-        ))}
-      </div>
+	if (Object.keys(selectedPokemons).length === 0) {
+		history.replace("/game/");
+	}
 
-      <div className={s.playerTwo}>
-        <PlayerBoard
-          cards={currentPlayerTwoCards}
-          player="Two"
-          currentPlayer={currentPlayer}
-          onChooseCard={(card) => handleCardClick(card)}
-        />
-      </div>
+	return (
+		<div className={s.root}>
+			<div className={s.playerOne}>
+				<PlayerBoard
+					cards={playerOneCards}
+					player="One"
+					currentPlayer={currentPlayer}
+					onChooseCard={(card) => setChosenCard(card)}
+				/>
+			</div>
 
-      <ArrowChoice side={currentPlayer} />
+			<div className={s.board}>
+				{board.map((cell) => (
+					<div
+						key={cell.position}
+						className={s.boardPlate}
+						onClick={() => {
+							!cell.card && handleBoardClick(cell.position);
+						}}
+					>
+						{cell.card && (
+							<PokemonCard
+								{...cell.card}
+								minimize
+								isActive
+								isSelected={false}
+							/>
+						)}
+					</div>
+				))}
+			</div>
 
-      {gameResult && <Result type={gameResult} />}
-    </div>
-  );
+			<div className={s.playerTwo}>
+				<PlayerBoard
+					cards={playerTwoCards}
+					player="Two"
+					currentPlayer={currentPlayer}
+					onChooseCard={(card) => setChosenCard(card)}
+				/>
+			</div>
 
-  return isWaitForGameStart ? <Loader /> : boardPageContent;
+			<ArrowChoice side={currentPlayer} />
+
+			{gameResult && <Result type={gameResult} />}
+		</div>
+	);
 };
 
 export default BoardPage;
