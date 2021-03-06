@@ -52,19 +52,12 @@
 	width: 268px;
 	height: 388px;
 	margin: 16px;
-	perspective: 1000px;
-	opacity: 0.6;
-	transition: opacity 0.4s 0.1s, transform 0.4s 0.1s;
 }
 
 .opponentCards .card.pickable {
 	cursor: pointer;
 }
 
-.opponentCards .card.pickable:hover {
-	opacity: 1;
-}
-
-.opponentCards .card.pickable.chosen {
+.opponentCards .card.chosen {
 	transform: scale(1.15);
 }
