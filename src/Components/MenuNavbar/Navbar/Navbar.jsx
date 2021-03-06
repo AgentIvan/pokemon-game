@@ -1,11 +1,14 @@
-import { Link } from 'react-router-dom';
-import cn from 'classnames';
+import { Link } from "react-router-dom";
+import cn from "classnames";
 
-import Logo from './assets/logo.png';
+import { ReactComponent as LoginIcon } from "./assets/login.svg";
+import Logo from "./assets/logo.png";
 
-import s from './Navbar.module.css';
+import s from "./Navbar.module.css";
 
-const Navbar = ({ isMenuActive, isBgActive, onMenuBtnClick }) => {
+const Navbar = (props) => {
+  const { isMenuActive, isBgActive, onMenuBtnClick, onLoginBtnClick } = props;
+
   return (
     <nav className={cn(s.navbar, { [s.bgActive]: isBgActive })}>
       <div className={s.navWrapper}>
@@ -14,11 +17,16 @@ const Navbar = ({ isMenuActive, isBgActive, onMenuBtnClick }) => {
             <img src={Logo} alt="Pokemon Logo" />
           </Link>
         </div>
-        <div
-          className={cn(s.menuButton, { [s.active]: isMenuActive })}
-          onClick={onMenuBtnClick}
-        >
-          <span />
+        <div className={s.loginAndMenu}>
+          <div className={s.loginIcon} onClick={onLoginBtnClick}>
+            <LoginIcon />
+          </div>
+          <div
+            className={cn(s.menuButton, { [s.active]: isMenuActive })}
+            onClick={onMenuBtnClick}
+          >
+            <span />
+          </div>
         </div>
       </div>
     </nav>
@@ -29,6 +37,7 @@ Navbar.defaultProps = {
   isMenuActive: false,
   isBgActive: false,
   onMenuBtnClick: () => {},
+  onLoginBtnClick: () => {},
 };
 
 export default Navbar;
